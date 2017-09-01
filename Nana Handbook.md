@@ -50,16 +50,35 @@ It sends the text "Hello World!" and a newline/line flush(endl) to the console f
 Let's start a HelloWorld program with Nana.
 
 ```cpp
-1	#include <nana/gui.hpp>
-2
-3	int main()
-4	{
-5		nana::msgbox msg{"Example"};
-6		msg << "Hello World!";
-7		msg.show();
-8	}
+//It instructs the compiler to include the core part of Nana,
+//it contains some class and function definitions.
+#include <nana/gui.hpp>
+
+int main()
+{
+	//A message box object is created, titiled "Example".
+	nana::msgbox msg{"Example"};
+
+	//Sends the text "Hello World!" to the message box
+	//output buffer.
+	msg << "Hello World!";
+
+	//Pops up a messagebox. The `show()` blocks the execution
+	//until the message box is closed.
+	msg.show();
+}
 ```
 
 It pops up a message box and displays text "Hello World!". Then click the OK button, the program exits.
 
-**Line 1** It instructs the compiler to include the core part of Nana, it contains some class and function definitions.
+
+Another HelloWorld program with Nana.
+
+```cpp
+#include <nana/gui.hpp>
+
+int main()
+{
+	
+}
+```
