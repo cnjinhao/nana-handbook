@@ -45,7 +45,7 @@ int main()
 }
 ```
 
-It send the text "Hello World!" and a newline/line flush(endl) to the console for output and disply.
+It sends the text "Hello World!" and a newline/line flush(endl) to the console for output and disply.
 
 Let's start a HelloWorld program with Nana.
 
