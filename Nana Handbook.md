@@ -9,8 +9,8 @@ Now let's get started!
 
 INTRODUCTION
 
-  * Why is Modern C++?
-  * Hello World!
+  * [Why is Modern C++?](#why-is-modern-c)
+  * [Hello World!](#hello-world)
 
 # INTRODUCTION
 Nana is a cross-platform library written in modern C++, which is designed to make things simple and intuitive.
