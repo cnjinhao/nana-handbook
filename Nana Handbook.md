@@ -122,3 +122,34 @@ int main()
 ```
 
 This example also shows a basic structure of Nana's application. Prepare at least one form object, then call `exec()`. The `exec()` listens for a user input and dispatches the input to correspending modules for processing.
+
+### EXAMPLE 3
+
+This example shows the text "Hello World!" by drawing the text on a form.
+
+```cpp
+#include <nana/gui.hpp>
+
+int main()
+{
+	//Brings all nana names into main scope.
+	using namespace nana;
+
+	//Create a form.
+	form fm;
+
+	//Draws text "Hello World!" on the form.
+	drawing{fm}.draw([](paint::graphics& graph){
+		graph.string({ 10, 20 }, "Hello World!", colors::black);
+	});
+
+	//Shows the form
+	fm.show();
+
+	//where main() passes the control to Nana, and exec() will return
+	//if the form is closed.
+	exec();
+}
+```
+
+Draws the text directly on the surface of form. The class `drawing` is set a drawer to the specified widget and the drawer will be invoked everytime the widget refreshes.
