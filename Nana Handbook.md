@@ -7,10 +7,11 @@ Now let's get started!
 
 ## Table of Contents
 
-INTRODUCTION
+[INTRODUCTION](#introduction)
 
   * [Why is Modern C++?](#why-is-modern-c)
   * [Hello World!](#hello-world)
+  * Basic Structure of Application
 
 # INTRODUCTION
 Nana is a cross-platform library written in modern C++, which is designed to make things simple and intuitive.
@@ -153,3 +154,36 @@ int main()
 ```
 
 Draws the text directly on the surface of form. The class `drawing` is set a drawer to the specified widget and the drawer will be invoked everytime the widget refreshes.
+
+## BASIC STRUCTURE OF APPLICATION
+
+A normal Nana application contains two main elements:
+
+  * A form
+  * An event loop
+
+```cpp
+#include <nana/gui.hpp>
+
+int main()
+{
+	nana::form fm;
+	fm.show();
+
+	nana::exec();
+}
+```
+
+In the above example we showed a very basic Nana application, which creates a form and starts an event loop.
+
+When the program runs, it shows a window, but it doesn't exit immediately. Because the `nana::exec()` starts an event loop and blocks the execution of `main()` function. In `nana::exec()`, Nana receives and processes user and system events and passes these on to the appropriate widgets.
+
+`nana::exec()` will return when the form is closed. If we define multiple forms, `nana::exec()` will return when all forms are closed.
+
+> Q: Why doesn't Nana have a main window feature that closing the main window causes the application to shutdown?
+
+The answer to the question from 2 aspects.
+
+* The Nana is a library, not a framework. Nana doesn't take over the startup and exit of the control of the program, unlike some frameworks, the entry of program is a framework defined entry, not C++ `main()` entry. So returning `nana::exec()` doesn't mean to shutdown the program. 
+
+* Nana supports multithread, developer can start a new thread for GUI. The main window feature will increase design complexity in multithread environment, it also brings the complexity that makes developers write error-prone code.
