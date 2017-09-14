@@ -12,6 +12,7 @@ Now let's get started!
   * [Why is Modern C++?](#why-is-modern-c)
   * [Hello World!](#hello-world)
   * [Basic Structure of Application](#basic-structure-of-application)
+  * [Multithreaded GUI](#multithreaded-gui)
 
 # INTRODUCTION
 Nana is a cross-platform library written in modern C++, which is designed to make things simple and intuitive.
@@ -187,3 +188,24 @@ When the program runs, it shows a window, but it doesn't exit immediately. Becau
 >* The Nana is a library, not a framework. Nana doesn't take over the startup and exit of the control of the program, unlike frameworks, the entry of program is a framework defined entry, not C++ `main()` entry. So returning `nana::exec()` doesn't mean to shutdown the program. 
 >
 >* Nana supports multithreading, developer can start a new thread for GUI. The main window feature will increase design complexity in multithreaded environment, it also brings the complexity that makes developers write error-prone code.
+
+Let's take a look at another example
+
+```cpp
+#include <nana/gui.hpp>
+
+nana::form fm;
+
+int main()
+{
+	fm.show();
+	nana::exec();
+}
+```
+
+The program is incorrect event though it contains 2 main elements. The behavior of initialization of the global variable `fm` is undefined, because the initialization of `fm` depends on the internal library data and resources, the orders of initialization of `fm` and the initialization of internal library data are unspecified.
+
+Consequently, all Nana widgets should never be declared as global variables.
+
+## MULTITHREADED GUI
+
