@@ -11,6 +11,7 @@ Now let's get started!
 
   * [Why is Modern C++?](#why-is-modern-c)
   * [Hello World!](#hello-world)
+  * [Event Handling](#event-handling)
   * [Basic Structure of Application](#basic-structure-of-application)
   * [Multithreaded GUI](#multithreaded-gui)
 
@@ -156,6 +157,33 @@ int main()
 
 Draws the text directly on the surface of form. The class `drawing` is set a drawer to the specified widget and the drawer will be invoked everytime the widget refreshes.
 
+## EVENT HANDLING
+
+An event describes the change in state of UI object. For example: pressing a button, entering a character in textbox, etc. Any program that uses Nana is event driven. After the UI objects are created, the program passes the control to the event loop and listens for events, and then triggers a callback function when one of those events is raised.
+
+The event handling in Nana is dynamic event handling. It allows program to install a new event handler or to uninstall an existing event handler in runtime.
+
+```cpp
+#include <nana/gui.hpp>
+#include <iostream>
+
+int main()
+{
+	using namespace nana;
+
+	form fm;
+	fm.show();
+
+	fm.events().click([]{
+		std::cout<<"The form is clicked"<<std::endl;
+	});
+
+	exec();
+}
+```
+
+In this example, the program sends the text `"The form is clicked"` to the console for display when the form is clicked.
+
 ## BASIC STRUCTURE OF APPLICATION
 
 A normal Nana application contains two main elements:
@@ -209,3 +237,72 @@ Consequently, all Nana widgets should never be declared as global variables.
 
 ## MULTITHREADED GUI
 
+Many GUI frameworks require all GUI objects to be accessed exclusively by the UI thread. If a GUI object is accessed from a non-UI thread, an invalid thread access error occurs and the whole application may abort. Nowadays, the multithreading paradigm has become more popluar, using a tradditional GUI frameworks in multithreadeded environment will introduce many software design/architecture problems, working around this and having all GUI objects created in one UI thread would be rather messy.
+
+Nana is designed to support multithreading, a multithreaded GUI can make the program architecture more flexible. More than that, Nana also minimizes the complexity of writing a multithreaded GUI. There is a little difference between multithreading and single-thread in structure.
+
+```cpp
+#include <nana/gui.hpp>
+#include <thread>
+
+int main()
+{
+
+	using namespace nana;
+
+	form fm;
+	fm.show();
+
+	std::thread thr{ [] {
+		form thr_fm;
+		thr_fm.show();
+
+		exec();
+	} };
+
+	exec();
+
+	thr.join();
+}
+```
+
+In the above example, we created 2 form in different threads. The `exec()` must be called for each thread, it creates separate event loops for each thread.
+
+Now, let's look at the multithreaded UI interaction.
+
+```cpp
+#include <nana/gui.hpp>
+#include <nana/gui/widgets/button.hpp>
+#include <nana/gui/widgets/label.hpp>
+#include <thread>
+
+int main()
+{
+	using namespace nana;
+
+	form fm;
+	label lbl{ fm, rectangle{10, 10, 180, 24} };
+
+	std::thread thr{ [&] {
+		form thr_fm;
+		button thr_btn{ thr_fm, rectangle{10, 10, 100, 24} };
+
+		thr_btn.caption("Say Hello");
+		thr_btn.events().click([&] {
+			lbl.caption("Hello from another thread");
+		});
+
+		thr_fm.show();
+
+		exec();
+	} };
+
+	fm.show();
+
+	exec();
+
+	thr.join();
+}
+```
+
+In the above example, a label was created on the form which is created by `main()` function, and a button was created on the form which is in another thread. When the button get clicked, it sends the text `"Hello from another thread"` to the label for output and display.
