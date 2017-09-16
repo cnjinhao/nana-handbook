@@ -15,6 +15,9 @@ Now let's get started!
   * [Basic Structure of Application](#basic-structure-of-application)
   * [Multithreaded GUI](#multithreaded-gui)
 
+[PRACTICES](#practices)
+  * [Pi Calculator](#pi-calculator)
+
 # INTRODUCTION
 Nana is a cross-platform library written in modern C++, which is designed to make things simple and intuitive.
 
@@ -306,3 +309,57 @@ int main()
 ```
 
 In the above example, a label was created on the form which is created by `main()` function, and a button was created on the form which is in another thread. When the button get clicked, it sends the text `"Hello from another thread"` to the label for output and display.
+
+# PRACTICES
+
+## Pi CALCULATOR
+
+This chapter intends to illustrate how to create a Pi(π) calculator step by step.
+
+Create the UI
+
+```cpp
+#include <nana/gui.hpp>
+#include <nana/gui/widgets/label.hpp>
+#include <nana/gui/widgets/spinbox.hpp>
+#include <nana/gui/widgets/button.hpp>
+#include <nana/gui/widgets/textbox.hpp>
+#include <nana/gui/widgets/progress.hpp>
+
+int main()
+{
+	using namespace nana;
+
+	form fm;
+	fm.caption("Pi Calculator");
+
+	label lab{ fm, "Digits of Pi:" };
+	lab.text_align(align::right, align_v::center);
+	
+	spinbox spin{fm};
+	spin.range(1, 9000000, 1);
+
+	button btn{ fm };
+	btn.caption("Calculate");
+
+	textbox txt{ fm };
+	txt.editable(false);
+	txt.enable_caret();
+
+	progress prg{ fm };
+
+	
+	fm.div("vert <weight=35 margin=5 arrange=[80,variable, 90] gap=7 conf><text><weight=12 progress>");
+	fm["conf"] << lab << spin << btn;
+	fm["text"] << txt;
+	fm["progress"] << prg;
+	fm.collocate();
+	
+	fm.show();
+
+	exec();
+}
+```
+![Pi Caclulator](./resources/pi-calculator.png)
+
+The UI contains a spinbox for selecting the digits of Pi, a button for starting calculation, a textbox for displaying Pi and a progress bar for the progress of calculation.
