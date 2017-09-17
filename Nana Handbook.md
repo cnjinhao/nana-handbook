@@ -363,3 +363,200 @@ int main()
 ![Pi Caclulator](./resources/pi-calculator.png)
 
 The UI contains a spinbox for selecting the digits of Pi, a button for starting calculation, a textbox for displaying Pi and a progress bar for the progress of calculation.
+
+Now, let's implement the function of pi calculation.
+
+```cpp
+template<typename Progress>
+std::string calc_pi(std::size_t digits, Progress progress)
+{
+	std::string pi = "3.";
+	for (std::size_t i = 0; i < digits; i += 9) {
+		//Implementation of Pi algorithm
+		//...
+		progress(digits_calculated);
+	}
+	return pi;
+}
+```
+
+`calc_pi()` has 2 parameters, the first parameter specifies the number of digits of Pi will be generated, the second parameter is a function object used for informing the UI to update the progress. The return value of `calc_pi()` is the generated Pi.
+
+Now, let's integrate the `calc_pi()` into the Pi Calculator program.
+
+```cpp
+int main()
+{
+	using namespace nana;
+
+	//...
+
+	progress prg{ fm };
+
+	//Let's put the code here
+	btn.events().click([&]{
+		btn.enabled(false);
+
+		auto digits = spin.to_int();
+
+		prg.amount(digits);
+		prg.value(0);
+
+		auto pi = calc_pi(digits, [&](std::size_t calculated_digits){
+			prg.value(calculated_digits);
+		});
+
+		txt.caption(pi);
+
+		btn.enabled(true);
+	});
+
+	
+	fm.div("vert <weight=35 margin=5 arrange=[80,variable, 90] gap=7 conf><text><weight=12 progress>");
+	
+	//..
+
+	exec();
+}
+```
+
+The program starts to calculate the Pi when the button(`btn`) is clicked. Let's take a look at the `click handler` for the button. Before calculating, we need to **disable** the button for avoiding a user clicking the button during the Pi calculation. The max value of progress bar is equal to the number of digits that the program will generated for Pi. Then, call `calc_pi()` for generating the n-th digits of Pi. A function created by the lambda is passed to the second parameter of the `calc_pi()`, the lambda updates the progress bar during calculation. When the calculation finishes, the Pi is sent to text for display. In the end, enables the button.
+
+### PREVENT UI FROM FREEZING DURING LONG-RUNNING OPERATIONS
+
+Let's compile this program and run it. We will see the Pi in the textbox. But if a big number is inputted for the digits of Pi, the UI will freeze during Pi calculation. To create a responsive UI, the long-running operation need to be executed asynchronously, meaning that rather than blocking the thread calling event handler from returning to the event loop until the operation has completed. Let's address this issue.
+
+```cpp
+//#include ...
+#include <future>
+
+int main()
+{
+	using namespace nana;
+
+	//...
+
+	progress prg{ fm };
+
+	std::future<void> pi_future;
+
+	//Let's put the code here
+	btn.events().click([&]{
+		pi_future = std::async(std::launch::async, [&]{
+			btn.enabled(false);
+
+			auto digits = spin.to_int();
+
+			prg.amount(digits);
+			prg.value(0);
+
+			auto pi = calc_pi(digits, [&](std::size_t calculated_digits){
+				prg.value(calculated_digits);
+			});
+
+			txt.caption(pi);
+
+			btn.enabled(true);
+		}
+	});
+
+	
+	fm.div("vert <weight=35 margin=5 arrange=[80,variable, 90] gap=7 conf><text><weight=12 progress>");
+	
+	//..
+
+	exec();
+}
+```
+
+The program runs the Pi calculation job asynchronously by using `std::async()`. The object `pi_future` is used for holding the return value of `std::async()` in order to prevent from destructing the temporary `std::future` object returned by `std::async()`, otherwise, the destruction of the temporary `std::future` blocks the execution of click event handler.
+
+Run the program again, and input a larger digits of Pi. We will see a responsive UI during Pi calculation. Now the asynchronous calculation brings a new issue, When the Pi calculation is working, the process doesn't terminated even though the UI is closed. It's unexpected, we need to fix the issue. The reason for the issue is that the Pi calculation hasn't finished yet.
+
+```cpp
+template<typename Progress>
+std::string calc_pi(std::size_t digits, Progress progress)
+{
+	std::string pi = "3.";
+	for (std::size_t i = 0; i < digits; i += 9) {
+		//Implementation of Pi algorithm
+		//...
+
+		//Stop calculating if progress returns false
+		if(!progress(digits_calculated))
+			return {};
+	}
+	return pi;
+}
+
+//#include ...
+#include <future>
+#include <atomic>
+
+int main()
+{
+	using namespace nana;
+
+	//...
+
+	progress prg{ fm };
+
+	std::future<void> pi_future;
+
+	//A flag indicates the form is unloading.
+	std::atomic<bool> unloaded{false};
+
+	//Let's put the code here
+	btn.events().click([&]{
+
+		//Move this statement out of the std::async's function.
+		//Because the button is used to check the status of
+		//calculation in unload event handler.
+		btn.enabled(false);
+
+		pi_future = std::async(std::launch::async, [&]{
+
+			auto digits = spin.to_int();
+
+			prg.amount(digits);
+			prg.value(0);
+
+			auto pi = calc_pi(digits, [&](std::size_t calculated_digits){
+				prg.value(calculated_digits);
+
+				//Stop calculating when form is going to closed.
+				return !unloaded.load();
+			});
+
+			txt.caption(pi);
+
+			btn.enabled(true);
+		}
+	});
+
+	fm.events.unload([&]{
+		//It indicates the calculation is working if button
+		//is disabled.
+		if(false == btn.enabled())
+		{
+			unloaded = true;
+
+			internal_revert_guard irg; //This is important
+			pi_future.wait();
+		}
+	});
+
+	
+	fm.div("vert <weight=35 margin=5 arrange=[80,variable, 90] gap=7 conf><text><weight=12 progress>");
+	
+	//..
+
+	exec();
+}
+```
+
+In the form unload event handler, we set the flag `unloaded` to inform the calculation, then call `pi_future.wait()` to wait for the calculation.
+
+The `internal_revert_guard irg;` is important, because `pi_future.wait()` will block the execution of the calling thread, the calling thread has acquired the `internal library mutex`, when `calc_pi()` exits, the job will update the textbox and enable the button in other thread, these operations all require to acquire the `internal library mutex`. Without `internal_revert_guard irg;`, a deadlock occurs.
+
+The class `internal_revert_guard` is useful for Nana multithreaded programming. When a thread is going to perform a wait operation, but it has acquired the `internal library mutex`, the `internal_revert_guard` should be performed before a wait opertion, it is used for releasing the `internal library mutex` when it is constructing, after the wait operation finished, destructs the `internal_revert_guard`, it will automatically acquire the `internal library mutex` as the state before it constructed.
