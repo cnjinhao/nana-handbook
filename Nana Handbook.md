@@ -420,6 +420,8 @@ int main()
 }
 ```
 
+![Pi Caclulator](./resources/pi-calculator-result.png)
+
 The program starts to calculate the Pi when the button(`btn`) is clicked. Let's take a look at the `click handler` for the button. Before calculating, we need to **disable** the button for avoiding a user clicking the button during the Pi calculation. The max value of progress bar is equal to the number of digits that the program will generated for Pi. Then, call `calc_pi()` for generating the n-th digits of Pi. A function created by the lambda is passed to the second parameter of the `calc_pi()`, the lambda updates the progress bar during calculation. When the calculation finishes, the Pi is sent to text for display. In the end, enables the button.
 
 ### PREVENT UI FROM FREEZING DURING LONG-RUNNING OPERATIONS
