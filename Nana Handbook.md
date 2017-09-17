@@ -314,7 +314,7 @@ In the above example, a label was created on the form which is created by `main(
 
 ## Pi CALCULATOR
 
-This chapter intends to illustrate how to create a Pi(π) calculator step by step.
+This chapter intends to illustrate how to create a Pi(π) calculator step by step. (You can find the [source](./code/pi-calculator.cpp) of the example here).
 
 Create the UI
 
