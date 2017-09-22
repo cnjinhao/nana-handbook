@@ -12,6 +12,7 @@ Now let's get started!
   * [Why is Modern C++?](#why-is-modern-c)
   * [Hello World!](#hello-world)
   * [Event Handling](#event-handling)
+  * [Layout Management](#layout-management)
   * [Basic Structure of Application](#basic-structure-of-application)
   * [Multithreaded GUI](#multithreaded-gui)
 
@@ -187,6 +188,10 @@ int main()
 
 In this example, the program sends the text `"The form is clicked"` to the console for display when the form is clicked.
 
+## LAYOUT MANAGEMENT
+
+The class [place](http://nanapro.org/en-us/documentation/page.php?u=/utilities/place) provides UI layout management, it is a string-based layout engine, the rule of layout management is given by a [Div-Text](https://github.com/cnjinhao/nana/wiki/Div-Text).
+
 ## BASIC STRUCTURE OF APPLICATION
 
 A normal Nana application contains two main elements:
@@ -343,6 +348,9 @@ int main()
 	btn.caption("Calculate");
 
 	textbox txt{ fm };
+
+	//A non-editable textbox but it is allowed a user
+	//selecting text with the enabled caret.
 	txt.editable(false);
 	txt.enable_caret();
 

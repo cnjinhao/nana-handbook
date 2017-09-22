@@ -5,6 +5,8 @@
 #include <nana/gui/widgets/textbox.hpp>
 #include <nana/gui/widgets/progress.hpp>
 
+#include <cmath> //required by std::sqrt/std::log
+
 //If async is not defined, the program is single-threaded.
 #define ASYNC
 
