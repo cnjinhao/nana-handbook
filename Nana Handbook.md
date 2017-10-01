@@ -1,7 +1,7 @@
 # Nana Handbook
 2017 Nana C++ Library Developer Community
 
-This documentation introduces some basic knowledges about rapid GUI programming with Nana C++ Library.
+This documentation introduces some basic knowledge about rapid GUI programming with Nana C++ Library.
 
 Now let's get started!
 
@@ -23,25 +23,26 @@ Now let's get started!
 Nana is a cross-platform library written in modern C++, which is designed to make things simple and intuitive.
 
 ## WHY IS MODERN C++?
-By "Modern C++" we mean C++11/14/17, the philosophy of modern C++ is to write simple and intuitive code using modern C++ features:
+By "Modern C++" we mean C++11/14/17, etc. 
+The philosophy of modern C++ is to write simple and intuitive code using the C++ features:
 
   * RAII
-  * Standard library
+  * The Standard library
   * Templates and metaprogramming
   * Exceptions
 
-Resource acquisition is initialization(RAII) is an important technique of C++, it reduces a huge complexity for the application of Nana. For a developer, he would not take care about how a Nana class acquires/releases resource and also don't warry about the resource leak when an exception is thrown.
+Resource acquisition is initialization(RAII) is an important C++ technique. It reduces the huge complexity for the application of Nana. A developer would not take care about how a Nana class acquires/releases resource and also don't warry about the resource leak when an exception is thrown.
 
-The standard library is used not only the internal implementation of Nana but also in the design of programming interfaces. Smart pointers and containers used for the return value type and parameter types greatly reduce the complexity of memory management. For example, passing multi values with an intializer-list to a function that parameter is a container.
+The standard library is used not only for the internal implementation of Nana, but also in the design of the programming interfaces. Smart pointers and containers used for the return value type and parameter types greatly reduce the complexity of memory management. For example, passing multi values with an intializer-list to a function for which the parameter is a container.
 
-Templates and metaprogramming have nature ability for library design. By using these techniques, it is possible to make more general and intuitive interfaces/functions/class. For example, Nana's event handler is designed to have a parameter to receive the event argument, but developers can pass a function without the parameter to the event register when they want to ignore the event argument.
+Templates and metaprogramming offer natural advantage for library design. By using these techniques, it is possible to make more general and intuitive interfaces/functions/class. For example, Nana's event handler is designed to have a parameter to receive the event argument, but developers can pass a function without the parameter to the event register when they want to ignore the event argument.
 
 Using exceptions for error handling makes library simpler, cleaner and less likely to miss errors. It is safe because of RAII.
 
 
 ## HELLO WORLD!
 
-A traditional HelloWorld program in C++ book is looked like this
+A traditional HelloWorld program in a C++ book looks like this:
 
 ```cpp
 #include <iostream>
@@ -54,7 +55,7 @@ int main()
 
 It sends the text "Hello World!" and a newline/line flush(endl) to the console for output and display.
 
-Now, let's start 3 HelloWorld examples with Nana. Each example displays the text "Hello World!" with different functions.
+Now, let's start three HelloWorld examples with Nana. Each example displays the text "Hello World!" with different functions.
 
 ### EXAMPLE 1
 
@@ -67,21 +68,21 @@ Display "Hello World!" by popping up a message box.
 
 int main()
 {
-	//A message box object is created, titiled "Example".
+	//A message box object is created, titled "Example".
 	nana::msgbox msg{"Example"};
 
 	//Sends the text "Hello World!" to the message box
 	//output buffer.
 	msg << "Hello World!";
 
-	//Pops up a messagebox. The `show()` blocks the execution
-	//until the message box is closed.
+	// Pops up a messagebox. The `show()` function blocks the execution of the main 
+	// programm until the message box is closed.
 	msg.show();
 }
 ```
 >Q: Why does Nana provide a class for the message box rather than a function like Win32 MessageBox?
 
->A: Because the class msgbox is designed to be a function object. Following example illustrates the msgbox to be used as a handler that pops up a message box when form is clicked.
+>A: Because the class msgbox is designed to be a function object. The following example illustrates the msgbox used as a handler that pops up a message box when the form is clicked.
 >
 >```cpp
 >#include <nana/gui.hpp>
@@ -94,6 +95,7 @@ int main()
 >	nana::exec();
 >}
 >```
+Here, as usually, the operator `<<()` return a reference to `*this`, which in this case is the temporal `msgbox` object just created, and then wrapped and conserved by the `click()` function to be called each time the click event is triggered on the `fm` object. This works because the `operator call()` defined for `msgbox` is just it function `show()`
 
 ### EXAMPLE 2
 
@@ -107,7 +109,7 @@ Create a form and a label widget, the label displays the text "Hello World!". A 
 
 int main()
 {
-	//Brings all nana names into main scope.
+	//Brings all included nana names into main scope.
 	using namespace nana;
 
 	//Create a form.
@@ -128,7 +130,7 @@ int main()
 }
 ```
 
-This example also shows a basic structure of Nana's application. Prepare at least one form object, then call `exec()`. The `exec()` listens for a user input and dispatches the input to correspending modules for processing.
+This example also shows the basic structure of a Nana's application. Prepare at least one form object, then call `exec()`. The `exec()` listens for a user input and dispatches the input to the correspending modules for processing.
 
 ### EXAMPLE 3
 
@@ -159,13 +161,13 @@ int main()
 }
 ```
 
-Draws the text directly on the surface of form. The class `drawing` is set a drawer to the specified widget and the drawer will be invoked everytime the widget refreshes.
+Draws the text directly on the surface of form. The class `drawing` set a drawer for the specified widget and that drawer will be invoked everytime the widget refreshes.
 
 ## EVENT HANDLING
 
-An event describes the change in state of UI object. For example: pressing a button, entering a character in textbox, etc. Any program that uses Nana is event driven. After the UI objects are created, the program passes the control to the event loop and listens for events, and then triggers a callback function when one of those events is raised.
+An event describes a change in state of UI object. For example: pressing a button, entering a character in textbox, etc. Any program that uses Nana is event driven. After the UI objects are created, the program passes the control to the event loop, which listens for events, and then triggers a callback function when one of those events is raised.
 
-The event handling in Nana is dynamic event handling. It allows program to install a new event handler or to uninstall an existing event handler in runtime.
+The event handling in Nana is a dynamic event handling. It allows program to install a new event handler or to uninstall an existing event handler at runtime.
 
 ```cpp
 #include <nana/gui.hpp>
@@ -190,7 +192,7 @@ In this example, the program sends the text `"The form is clicked"` to the conso
 
 ## LAYOUT MANAGEMENT
 
-The class [place](http://nanapro.org/en-us/documentation/page.php?u=/utilities/place) provides UI layout management, it is a string-based layout engine, the rule of layout management is given by a [Div-Text](https://github.com/cnjinhao/nana/wiki/Div-Text).
+The class [place](http://nanapro.org/en-us/documentation/page.php?u=/utilities/place) provides a UI layout management. It is a string-based layout engine. The rules of layout management are given by a [Div-Text](https://github.com/cnjinhao/nana/wiki/Div-Text) string.
 
 ## BASIC STRUCTURE OF APPLICATION
 
@@ -213,15 +215,15 @@ int main()
 
 In the above example we showed a very basic Nana application, which creates a form and starts an event loop.
 
-When the program runs, it shows a window, but it doesn't exit immediately. Because the `nana::exec()` starts an event loop and blocks the execution of `main()` function. In `nana::exec()`, Nana receives and processes user and system events and passes these on to the appropriate widgets.
+When the program runs, it shows a window, but it doesn't exit immediately, because `nana::exec()` starts an event loop that blocks the execution of the `main()` function. In `nana::exec()`, Nana receives and processes user and system events and passes these on to the appropriate widgets.
 
 `nana::exec()` will return when the form is closed. If we define multiple forms, `nana::exec()` will return when all forms are closed.
 
 >Q: Why doesn't Nana have a main window feature that closing the main window causes the application to shutdown?
 
->A: The answer to the question from 2 aspects.
+>A: The answer to the question have 2 aspects.
 >
->* The Nana is a library, not a framework. Nana doesn't take over the startup and exit of the control of the program, unlike frameworks, the entry of program is a framework defined entry, not C++ `main()` entry. So returning `nana::exec()` doesn't mean to shutdown the program. 
+>* Nana is a library, not a framework. Nana doesn't take control over the startup and exit of the of the program, unlike frameworks, where the entry of the program is a framework defined entry, not the C++ `main()` entry. So returning `nana::exec()` doesn't mean to shutdown the program. 
 >
 >* Nana supports multithreading, developer can start a new thread for GUI. The main window feature will increase design complexity in multithreaded environment, it also brings the complexity that makes developers write error-prone code.
 
@@ -239,15 +241,15 @@ int main()
 }
 ```
 
-The program is incorrect event though it contains 2 main elements. The behavior of initialization of the global variable `fm` is undefined, because the initialization of `fm` depends on the internal library data and resources, the orders of initialization of `fm` and the initialization of internal library data are unspecified.
+The program is incorrect event though it contains the two main elements. The behavior of initialization of the global variable `fm` is undefined, because the initialization of `fm` depends on the internal library data and resources, the orders of initialization of `fm` and the initialization of internal library data are unspecified.
 
 Consequently, all Nana widgets should never be declared as global variables.
 
 ## MULTITHREADED GUI
 
-Many GUI frameworks require all GUI objects to be accessed exclusively by the UI thread. If a GUI object is accessed from a non-UI thread, an invalid thread access error occurs and the whole application may abort. Nowadays, the multithreading paradigm has become more popluar, using a tradditional GUI frameworks in multithreadeded environment will introduce many software design/architecture problems, working around this and having all GUI objects created in one UI thread would be rather messy.
+Many GUI frameworks require all GUI objects to be accessed exclusively by the UI thread. If a GUI object is accessed from a non-UI thread, an invalid thread access error occurs and the whole application may abort. Nowadays, the multithreading paradigm has become more popluar and using a tradditional GUI frameworks in a multithreadeded environment will introduce many software design/architecture problems, to work around this, and having all GUI objects created in one UI thread would be rather messy.
 
-Nana is designed to support multithreading, a multithreaded GUI can make the program architecture more flexible. More than that, Nana also minimizes the complexity of writing a multithreaded GUI. There is a little difference between multithreading and single-thread in structure.
+Nana is designed to support multithreading. A multithreaded GUI can make the program architecture more flexible. More than that, Nana also minimizes the complexity of writing a multithreaded GUI. There is a little difference between multithreading and single-thread in structure.
 
 ```cpp
 #include <nana/gui.hpp>
@@ -349,15 +351,17 @@ int main()
 
 	textbox txt{ fm };
 
-	//A non-editable textbox but it is allowed a user
-	//selecting text with the enabled caret.
+	//A non-editable textbox. It allows a user
+	//to select text if the caret is enabled.
 	txt.editable(false);
 	txt.enable_caret();
 
 	progress prg{ fm };
 
 	
-	fm.div("vert <weight=35 margin=5 arrange=[80,variable, 90] gap=7 conf><text><weight=12 progress>");
+	fm.div("vert <weight=35 margin=5 arrange=[80,variable, 90] gap=7 conf >"
+	       "     <text> "
+	       "     <weight=12 progress>");
 	fm["conf"] << lab << spin << btn;
 	fm["text"] << txt;
 	fm["progress"] << prg;
@@ -370,7 +374,7 @@ int main()
 ```
 ![Pi Caclulator](./resources/pi-calculator.png)
 
-The UI contains a spinbox for selecting the digits of Pi, a button for starting calculation, a textbox for displaying Pi and a progress bar for the progress of calculation.
+The UI contains a spinbox for selecting the number of digits of Pi, a button for starting the calculation, a textbox for displaying Pi and a progress bar to show the progress of the calculation.
 
 Now, let's implement the function of pi calculation.
 
@@ -388,7 +392,7 @@ std::string calc_pi(std::size_t digits, Progress progress)
 }
 ```
 
-`calc_pi()` has 2 parameters, the first parameter specifies the number of digits of Pi will be generated, the second parameter is a function object used for informing the UI to update the progress. The return value of `calc_pi()` is the generated Pi.
+`calc_pi()` has 2 parameters. The first parameter specifies the number of digits of Pi that will be generated. The second parameter is a function object used for informing the UI to update the progress widget. The return value of `calc_pi()` will be the generated Pi.
 
 Now, let's integrate the `calc_pi()` into the Pi Calculator program.
 
@@ -430,11 +434,11 @@ int main()
 
 ![Pi Caclulator](./resources/pi-calculator-result.png)
 
-The program starts to calculate the Pi when the button(`btn`) is clicked. Let's take a look at the `click handler` for the button. Before calculating, we need to **disable** the button for avoiding a user clicking the button during the Pi calculation. The max value of progress bar is equal to the number of digits that the program will generated for Pi. Then, call `calc_pi()` for generating the n-th digits of Pi. A function created by the lambda is passed to the second parameter of the `calc_pi()`, the lambda updates the progress bar during calculation. When the calculation finishes, the Pi is sent to text for display. In the end, enables the button.
+The program starts to calculate the Pi when the button(`btn`) is clicked. Let's take a look at the `click handler` for the button. Before calculating, we need to **disable** the button for avoiding a user clicking the button during the Pi calculation. The maximum value of the progress bar is equal to the number of digits that the program will generated for Pi. Then, call `calc_pi()` for generating the n-th digits of Pi. A function created by the lambda is passed to the second parameter of the `calc_pi()`. This lambda updates the progress bar during calculation. When the calculation finishes, the Pi is converted to text for display. At the end, enables the button.
 
 ### PREVENT UI FROM FREEZING DURING LONG-RUNNING OPERATIONS
 
-Let's compile this program and run it. We will see the Pi in the textbox. But if a big number is inputted for the digits of Pi, the UI will freeze during Pi calculation. To create a responsive UI, the long-running operation need to be executed asynchronously, meaning that rather than blocking the thread calling event handler from returning to the event loop until the operation has completed. Let's address this issue.
+Let's compile this program and run it. We will see the Pi in the textbox. But if a big number is inputted for the digits of Pi, the UI will freeze during Pi calculation. Meaning that to create a responsive UI, the long-running operation need to be executed asynchronously, rather than blocking the thread calling event handler from returning to the event loop until the operation has completed. Let's address this issue.
 
 ```cpp
 //#include ...
