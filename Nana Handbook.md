@@ -161,7 +161,7 @@ int main()
 }
 ```
 
-Draws the text directly on the surface of form. The class `drawing` set a drawer for the specified widget and that drawer will be invoked everytime the widget refreshes.
+Draws the text directly on the surface of form. The class `drawing` set a drawer for the specified widget and the drawer will be invoked everytime the widget refreshes.
 
 ## EVENT HANDLING
 
@@ -221,7 +221,7 @@ When the program runs, it shows a window, but it doesn't exit immediately, becau
 
 >Q: Why doesn't Nana have a main window feature that closing the main window causes the application to shutdown?
 
->A: The answer to the question have 2 aspects.
+>A: Answer this question from two aspects.
 >
 >* Nana is a library, not a framework. Nana doesn't take control over the startup and exit of the of the program, unlike frameworks, where the entry of the program is a framework defined entry, not the C++ `main()` entry. So returning `nana::exec()` doesn't mean to shutdown the program. 
 >
@@ -321,7 +321,7 @@ In the above example, a label was created on the form which is created by `main(
 
 ## Pi CALCULATOR
 
-This chapter intends to illustrate how to create a Pi(π) calculator step by step. (You can find the [source](./code/pi-calculator.cpp) of the example here).
+This chapter intends to illustrate how to create a Pi(π) calculator step by step. (You can find the [source](./code/pi calculator.cpp) of the example here).
 
 Create the UI
 
