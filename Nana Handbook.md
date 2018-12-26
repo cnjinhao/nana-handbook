@@ -1,7 +1,7 @@
 # Nana Handbook
 2017 Nana C++ Library Developer Community
 
-This documentation introduces some basic knowledge about rapid GUI programming with Nana C++ Library.
+This documentation introduces some basic knowledge about rapid GUI programming with the Nana C++ Library.
 
 Now let's get started!
 
@@ -9,7 +9,7 @@ Now let's get started!
 
 [INTRODUCTION](#introduction)
 
-  * [Why is Modern C++?](#why-is-modern-c)
+  * [Why Modern C++?](#why-modern-c)
   * [Hello World!](#hello-world)
   * [Event Handling](#event-handling)
   * [Layout Management](#layout-management)
@@ -22,22 +22,22 @@ Now let's get started!
 # INTRODUCTION
 Nana is a cross-platform library written in modern C++, which is designed to make things simple and intuitive.
 
-## WHY IS MODERN C++?
-By "Modern C++" we mean C++11/14/17, etc. 
-The philosophy of modern C++ is to write simple and intuitive code using the C++ features:
+## WHY MODERN C++?
+By "Modern C++" we mean C++11/14/17, etc.
+The philosophy of modern C++ is to write simple and intuitive code using C++ features such as:
 
   * RAII
   * The Standard library
   * Templates and metaprogramming
   * Exceptions
 
-Resource acquisition is initialization(RAII) is an important C++ technique. It reduces the huge complexity for the application of Nana. A developer would not take care about how a Nana class acquires/releases resource and also don't warry about the resource leak when an exception is thrown.
+Resource acquisition is initialization(RAII) is an important C++ technique. It reduces the huge complexity for the application of Nana. A developer does not need to care about how a Nana class acquires/releases resources and also does not need to worry about resource leaks when an exception is thrown.
 
-The standard library is used not only for the internal implementation of Nana, but also in the design of the programming interfaces. Smart pointers and containers used for the return value type and parameter types greatly reduce the complexity of memory management. For example, passing multi values with an intializer-list to a function for which the parameter is a container.
+The standard library is used not only for the internal implementation of Nana, but also in the design of the programming interfaces. Smart pointers and containers used for return value and parameter types greatly reduce the complexity of memory management. Like, for example, passing multiple values with an initializer-list to a function for which the parameter is a container.
 
-Templates and metaprogramming offer natural advantage for library design. By using these techniques, it is possible to make more general and intuitive interfaces/functions/class. For example, Nana's event handler is designed to have a parameter to receive the event argument, but developers can pass a function without the parameter to the event register when they want to ignore the event argument.
+Templates and meta programming offer natural advantages for library design. By using these techniques, it is possible to make more general and intuitive interfaces/functions/classes. For example, Nana's event handler is designed to have a parameter to receive the event argument, but developers can pass a function without the parameter to the event register if they want to ignore the event argument.
 
-Using exceptions for error handling makes library simpler, cleaner and less likely to miss errors. It is safe because of RAII.
+Using exceptions for error handling makes the library simpler, cleaner and less likely to miss errors. It is safe because of RAII.
 
 
 ## HELLO WORLD!
@@ -55,47 +55,47 @@ int main()
 
 It sends the text "Hello World!" and a newline/line flush(endl) to the console for output and display.
 
-Now, let's start three HelloWorld examples with Nana. Each example displays the text "Hello World!" with different functions.
+Now, let's start three HelloWorld examples with Nana. Each example displays the text "Hello World!" in a different way.
 
 ### EXAMPLE 1
 
 Display "Hello World!" by popping up a message box.
 
 ```cpp
-//It instructs the compiler to include the core part of Nana,
+//Instructs the compiler to include the core part of Nana,
 //this header file contains some class and function definitions.
 #include <nana/gui.hpp>
 
 int main()
 {
-	//A message box object is created, titled "Example".
+	//A message box object is created with title "Example".
 	nana::msgbox msg{"Example"};
 
 	//Sends the text "Hello World!" to the message box
 	//output buffer.
 	msg << "Hello World!";
 
-	// Pops up a messagebox. The `show()` function blocks the execution of the main 
+	// Pops up a messagebox. The `show()` function blocks the execution of the main
 	// programm until the message box is closed.
 	msg.show();
 }
 ```
 >Q: Why does Nana provide a class for the message box rather than a function like Win32 MessageBox?
 
->A: Because the class msgbox is designed to be a function object. The following example illustrates the msgbox used as a handler that pops up a message box when the form is clicked.
+>A: Because the msgbox class is designed to be a function object. The following example illustrates it used as a handler that pops up a message box when the form is clicked.
 >
 >```cpp
 >#include <nana/gui.hpp>
 >
 >int main()
 >{
->	nana::form fm;
->	fm.events().click(nana::msgbox{fm, "Example"}<<"The form is clicked");
->	fm.show();
->	nana::exec();
+>		nana::form fm;
+>		fm.events().click(nana::msgbox{fm, "Example"} << "The form is clicked");
+>		fm.show();
+>		nana::exec();
 >}
 >```
-Here, as usually, the operator `<<()` return a reference to `*this`, which in this case is the temporal `msgbox` object just created, and then wrapped and conserved by the `click()` function to be called each time the click event is triggered on the `fm` object. This works because the `operator call()` defined for `msgbox` is just it function `show()`
+Here, as usually, operator `<<()` returns a reference to `*this`, which in this case is a temporary `msgbox` object just created, and then wrapped and conserved by the `click()` function to be called each time the click event is triggered on the `fm` object. This works because the call `operator ()` defined for `msgbox` is just its `show()` function.
 
 ### EXAMPLE 2
 
@@ -118,7 +118,7 @@ int main()
 	//Create a label on the form, at position (1, 20) with size 100x30
 	label lb{fm, rectangle{10, 20, 100, 30}};
 
-	//Show the text "Hello World!"
+	//Show the text "Hello World!" on the label
 	lb.caption("Hello World!");
 
 	//Show the form
@@ -130,7 +130,7 @@ int main()
 }
 ```
 
-This example also shows the basic structure of a Nana's application. Prepare at least one form object, then call `exec()`. The `exec()` listens for a user input and dispatches the input to the correspending modules for processing.
+This example also shows the basic structure of a Nana application. Prepare at least one form object, then call `exec()`. The `exec()` listens for user input and dispatches the input to the corresponding modules for processing.
 
 ### EXAMPLE 3
 
@@ -161,13 +161,13 @@ int main()
 }
 ```
 
-Draws the text directly on the surface of form. The class `drawing` set a drawer for the specified widget and the drawer will be invoked everytime the widget refreshes.
+This draws the text directly on the surface of form. The class `drawing` sets up a drawer object for the specified widget and the drawer will be invoked every time the widget is repainted.
 
 ## EVENT HANDLING
 
-An event describes a change in state of UI object. For example: pressing a button, entering a character in textbox, etc. Any program that uses Nana is event driven. After the UI objects are created, the program passes the control to the event loop, which listens for events, and then triggers a callback function when one of those events is raised.
+An event describes a change in the state of a UI object. For example: pressing a button, entering a character in a textbox, etc. Any program that uses Nana is event driven. After the UI objects are created, the program passes the control to the event loop, which listens for events, and then triggers a callback function when one of those events is raised.
 
-The event handling in Nana is a dynamic event handling. It allows program to install a new event handler or to uninstall an existing event handler at runtime.
+The event handling in Nana is a dynamic. It allows programs to install a new event handler or to uninstall an existing event handler at runtime.
 
 ```cpp
 #include <nana/gui.hpp>
@@ -192,7 +192,7 @@ In this example, the program sends the text `"The form is clicked"` to the conso
 
 ## LAYOUT MANAGEMENT
 
-The class [place](http://nanapro.org/en-us/documentation/page.php?u=/utilities/place) provides a UI layout management. It is a string-based layout engine. The rules of layout management are given by a [Div-Text](https://github.com/cnjinhao/nana/wiki/Div-Text) string.
+The class [place](http://nanapro.org/en-us/documentation/page.php?u=/utilities/place) provides UI layout management. It is a string-based layout engine. The rules of layout management are given by a [Div-Text](https://github.com/cnjinhao/nana/wiki/Div-Text) string.
 
 ## BASIC STRUCTURE OF APPLICATION
 
@@ -213,19 +213,19 @@ int main()
 }
 ```
 
-In the above example we showed a very basic Nana application, which creates a form and starts an event loop.
+In the above example we gave a very basic Nana application, which creates a form and starts an event loop.
 
-When the program runs, it shows a window, but it doesn't exit immediately, because `nana::exec()` starts an event loop that blocks the execution of the `main()` function. In `nana::exec()`, Nana receives and processes user and system events and passes these on to the appropriate widgets.
+When the program runs, it shows a window, but it does not exit immediately, because `nana::exec()` starts an event loop that blocks the execution of the `main()` function. In `nana::exec()`, Nana receives and processes user and system events and passes these on to the appropriate widgets.
 
 `nana::exec()` will return when the form is closed. If we define multiple forms, `nana::exec()` will return when all forms are closed.
 
 >Q: Why doesn't Nana have a main window feature that closing the main window causes the application to shutdown?
 
->A: Answer this question from two aspects.
+>A: To answer this question we have to consider two aspects.
 >
->* Nana is a library, not a framework. Nana doesn't take control over the startup and exit of the of the program, unlike frameworks, where the entry of the program is a framework defined entry, not the C++ `main()` entry. So returning `nana::exec()` doesn't mean to shutdown the program. 
+>* Nana is a library, not a framework. Nana doesn't take control over the startup and exit of the of the program, unlike frameworks, where the entry of the program is a framework defined entry, not the C++ `main()` entry. So returning `nana::exec()` doesn't mean to shutdown the program.
 >
->* Nana supports multithreading, developer can start a new thread for GUI. The main window feature will increase design complexity in multithreaded environment, it also brings the complexity that makes developers write error-prone code.
+>* Nana supports multithreading, developers can start a new thread for GUI. The main window feature would increase design complexity in a multithreaded environment, it also introduces complexity that makes developers write error-prone code.
 
 Let's take a look at another example
 
@@ -243,7 +243,7 @@ int main()
 
 The program is incorrect event though it contains the two main elements. The behavior of initialization of the global variable `fm` is undefined, because the initialization of `fm` depends on the internal library data and resources, the orders of initialization of `fm` and the initialization of internal library data are unspecified.
 
-Consequently, all Nana widgets should never be declared as global variables.
+Consequently, Nana widgets should never be declared as global variables.
 
 ## MULTITHREADED GUI
 
@@ -276,9 +276,9 @@ int main()
 }
 ```
 
-In the above example, we created 2 form in different threads. The `exec()` must be called for each thread, it creates separate event loops for each thread.
+In the above example, we created 2 forms in different threads. The `exec()` function must be called for each thread, it creates a separate event loop for each thread.
 
-Now, let's look at the multithreaded UI interaction.
+Now, let's look at multithreaded UI interaction.
 
 ```cpp
 #include <nana/gui.hpp>
@@ -315,7 +315,7 @@ int main()
 }
 ```
 
-In the above example, a label was created on the form which is created by `main()` function, and a button was created on the form which is in another thread. When the button get clicked, it sends the text `"Hello from another thread"` to the label for output and display.
+In the above example, a label is created on the form which is created by the `main()` function, and a button was created on the form which is in another thread. When the button gets clicked, it sends the text `"Hello from another thread"` to the label for output and display.
 
 # PRACTICES
 
@@ -342,7 +342,7 @@ int main()
 
 	label lab{ fm, "Digits of Pi:" };
 	lab.text_align(align::right, align_v::center);
-	
+
 	spinbox spin{fm};
 	spin.range(1, 9000000, 1);
 
@@ -358,7 +358,7 @@ int main()
 
 	progress prg{ fm };
 
-	
+
 	fm.div("vert <weight=35 margin=5 arrange=[80,variable, 90] gap=7 conf >"
 	       "     <text> "
 	       "     <weight=12 progress>");
@@ -366,7 +366,7 @@ int main()
 	fm["text"] << txt;
 	fm["progress"] << prg;
 	fm.collocate();
-	
+
 	fm.show();
 
 	exec();
@@ -423,9 +423,9 @@ int main()
 		btn.enabled(true);
 	});
 
-	
+
 	fm.div("vert <weight=35 margin=5 arrange=[80,variable, 90] gap=7 conf><text><weight=12 progress>");
-	
+
 	//..
 
 	exec();
@@ -474,9 +474,9 @@ int main()
 		}
 	});
 
-	
+
 	fm.div("vert <weight=35 margin=5 arrange=[80,variable, 90] gap=7 conf><text><weight=12 progress>");
-	
+
 	//..
 
 	exec();
@@ -560,9 +560,9 @@ int main()
 		}
 	});
 
-	
+
 	fm.div("vert <weight=35 margin=5 arrange=[80,variable, 90] gap=7 conf><text><weight=12 progress>");
-	
+
 	//..
 
 	exec();
